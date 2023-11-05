@@ -92,7 +92,7 @@ try{
 	$redis->pconnect('192.168.1.2', 8888, 1.0);
 	$count1 = $redis->dbsize();
 
-	$m = new MongoClient();
+	$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 	$collection = $m->selectDB('cdbqueue')->selectCollection('queuedb');
 	$count2 = $collection->count();
 

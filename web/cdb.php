@@ -208,7 +208,7 @@ function updateScore( $redis, $row, $updatemoves ) {
 }
 function updateQueue( $row, $key, $priority ) {
 	global $readwrite_queue;
-	$m = new MongoClient('mongodb://localhost');
+	$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 	$collection = $m->selectDB('cdbqueue')->selectCollection('queuedb');
 	$BWfen = cbgetBWfen( $row );
 	list( $minhexfen, $minindex ) = getHexFenStorage( array( cbfen2hexfen($row), cbfen2hexfen($BWfen) ) );
@@ -248,7 +248,7 @@ function updateQueue( $row, $key, $priority ) {
 	}
 }
 function updateSel( $row, $priority ) {
-	$m = new MongoClient('mongodb://localhost');
+	$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 	$collection = $m->selectDB('cdbsel')->selectCollection('seldb');
 	$BWfen = cbgetBWfen( $row );
 	list( $minhexfen, $minindex ) = getHexFenStorage( array( cbfen2hexfen($row), cbfen2hexfen($BWfen) ) );
@@ -2258,7 +2258,7 @@ try{
 				$activelist[$_SERVER['REMOTE_ADDR']] = 1;
 				$memcache_obj->set( 'WorkerList2', $activelist, 0, 0 );
 			}
-			$m = new MongoClient('mongodb://localhost');
+			$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 			$collection = $m->selectDB('cdbackqueue')->selectCollection('ackqueuedb');
 			$doc = $collection->findAndModify( array( 'ts' => array( '$lt' => new MongoDate( time() - 3600 ) ) ), array( '$set' => array( 'ip' => $_SERVER['REMOTE_ADDR'], 'ts' => new MongoDate() ) ) );
 			if( !empty( $doc ) && isset( $doc['data'] ) ) {
@@ -2310,7 +2310,7 @@ try{
 	}
 	else if( $action == 'ackqueue' ) {
 		if( isset( $_REQUEST['key'] ) && isset( $_REQUEST['token'] ) && $_REQUEST['token'] == hash( 'md5', hash( 'md5', 'ChessDB' . $_SERVER['REMOTE_ADDR'] . $MASTER_PASSWORD ) . $_REQUEST['key'] ) ) {
-			$m = new MongoClient('mongodb://localhost');
+			$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 			$collection = $m->selectDB('cdbackqueue')->selectCollection('ackqueuedb');
 			$collection->remove( array( '_id' => new MongoBinData(hex2bin($_REQUEST['key'])) ) );
 			echo 'ok';
@@ -2333,7 +2333,7 @@ try{
 					$activelist[$_SERVER['REMOTE_ADDR']] = 1;
 					$memcache_obj->set( 'SelList2', $activelist, 0, 0 );
 			}
-			$m = new MongoClient('mongodb://localhost');
+			$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 			$collection = $m->selectDB('cdbacksel')->selectCollection('ackseldb');
 			$doc = $collection->findAndModify( array( 'ts' => array( '$lt' => new MongoDate( time() - 3600 ) ) ), array( '$set' => array( 'ip' => $_SERVER['REMOTE_ADDR'], 'ts' => new MongoDate() ) ) );
 			if( !empty( $doc ) && isset( $doc['data'] ) ) {
@@ -2378,7 +2378,7 @@ try{
 	}
 	else if( $action == 'acksel' ) {
 		if( isset( $_REQUEST['key'] ) && isset( $_REQUEST['token'] ) && $_REQUEST['token'] == hash( 'md5', hash( 'md5', 'ChessDB' . $_SERVER['REMOTE_ADDR'] . $MASTER_PASSWORD ) . $_REQUEST['key'] ) ) {
-			$m = new MongoClient('mongodb://localhost');
+			$m = new MongoClient('mongodb:///tmp/mongodb-27017.sock');
 			$collection = $m->selectDB('cdbacksel')->selectCollection('ackseldb');
 			$collection->remove( array( '_id' => new MongoBinData(hex2bin($_REQUEST['key'])) ) );
 			echo 'ok';
