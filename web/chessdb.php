@@ -2855,6 +2855,7 @@ try{
 				$cursor = $collection2->find()->sort( array( 'p' => -1, 'e' => 1 ) )->limit(10);
 				$docs = array();
 				$queueout = '';
+				$thisminute = date('i');
 				foreach( $cursor as $doc ) {
 					$fen = ccbhexfen2fen(bin2hex($doc['_id']->bin));
 					if( count_pieces( $fen ) >= 10 && count_attackers( $fen ) >= 4 ) {
@@ -2873,7 +2874,6 @@ try{
 							$queueout .= $fen . "\n";
 							foreach( $moves as $move )
 								$queueout .= $fen . ' moves ' . $move . "\n";
-							$thisminute = date('i');
 							$memcache_obj->add( 'QueueCount::' . $thisminute, 0, 0, 150 );
 							$memcache_obj->increment( 'QueueCount::' . $thisminute );
 						}
@@ -2932,6 +2932,7 @@ try{
 				$cursor = $collection2->find()->sort( array( 'p' => -1, 'e' => -1 ) )->limit(10);
 				$docs = array();
 				$selout = '';
+				$thisminute = date('i');
 				foreach( $cursor as $doc ) {
 					$fen = ccbhexfen2fen(bin2hex($doc['_id']->bin));
 					if( count_pieces( $fen ) >= 10 && count_attackers( $fen ) >= 4 )
@@ -2944,9 +2945,12 @@ try{
 								$selout .= '!' . $fen . "\n";
 							}
 						}
-						else if( $memcache_obj->add( 'SelHistory::' . $fen, 1, 0, 300 ) )
-							$selout .= $fen . "\n";
-						$thisminute = date('i');
+						else {
+							if( $memcache_obj->get( 'SelCount::' . $thisminute ) > $memcache_obj->get( 'QueueCount::' . $thisminute ) + 10 )
+								break;
+							if( $memcache_obj->add( 'SelHistory::' . $fen, 1, 0, 300 ) )
+								$selout .= $fen . "\n";
+						}
 						$memcache_obj->add( 'SelCount::' . $thisminute, 0, 0, 150 );
 						$memcache_obj->increment( 'SelCount::' . $thisminute );
 					}
