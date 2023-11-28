@@ -426,7 +426,7 @@ function getMoves( $redis, $row, $update, $learn, $depth ) {
 				foreach( $findmoves as $key => $item ) {
 					$nextfen = cbmovemake( $row, $key );
 					list( $nextmoves, $variations ) = getMoves( $redis, $nextfen, false, false, $depth );
-					if( count( $nextmoves ) > 0 ) {
+					if( count( $nextmoves ) > 0 || count_pieces( $nextfen ) <= 7 ) {
 						updateQueue( $row, $key, true );
 					}
 					else if( $learn ) {
