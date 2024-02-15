@@ -1078,18 +1078,7 @@ function getMovesWithCheck( $redis, $row, $banmoves, $ply, $enumlimit, $resetlim
 						}
 					}
 					else {
-						$allmoves = ccbmovegen( $row );
-						$moves3 = array_diff_key( $allmoves, $loopmebans );
-						if( count( $moves3 ) > 0 ) {
-							$GLOBALS['loopcheck'] = 3;
-						}
-						else {
-							foreach( array_keys( array_intersect_key( $moves1, $loopmebans ) ) as $key ) {
-								$moves1[$key] = -30000;
-								if( !$isloop )
-									$updatemoves[$key] = 30000;
-							}
-						}
+						$GLOBALS['loopcheck'] = 3;
 					}
 				}
 				if( count( $loopoppbans ) > 0 ) {
@@ -1470,18 +1459,7 @@ function getAnalysisPath( $redis, $row, $banmoves, $ply, $enumlimit, $isbest, $l
 						}
 					}
 					else {
-						$allmoves = ccbmovegen( $row );
-						$moves3 = array_diff_key( $allmoves, $loopmebans );
-						if( count( $moves3 ) > 0 ) {
-							$GLOBALS['loopcheck'] = 3;
-						}
-						else {
-							foreach( array_keys( array_intersect_key( $moves1, $loopmebans ) ) as $key ) {
-								$moves1[$key] = -30000;
-								if( !$isloop )
-									$updatemoves[$key] = 30000;
-							}
-						}
+						$GLOBALS['loopcheck'] = 3;
 					}
 				}
 				if( count( $loopoppbans ) > 0 ) {
